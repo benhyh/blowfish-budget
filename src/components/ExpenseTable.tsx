@@ -1,6 +1,7 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Pencil, Trash2 } from "lucide-react";
 
 interface Expense {
   id: string;
@@ -41,6 +42,7 @@ const ExpenseTable = ({ expenses }: ExpenseTableProps) => {
               <TableHead>Saving/Expense</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Description</TableHead>
+              <TableHead>Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -50,6 +52,32 @@ const ExpenseTable = ({ expenses }: ExpenseTableProps) => {
                 <TableCell>{expense.savingOrExpense}</TableCell>
                 <TableCell>${expense.amount.toFixed(2)}</TableCell>
                 <TableCell>{expense.description}</TableCell>
+                <TableCell>
+                  <div className="flex space-x-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // TODO: connect with supabase and to update expense respectively
+                        console.log("Update expense:", expense.id);
+                      }}
+                      className="bg-slate-200 hover:bg-slate-300 border-white-300"
+                    >
+                      <Pencil className="h-4 w-4" />
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        // TODO: connect with supabase and delete the expense respectively
+                        console.log("Delete expense:", expense.id);
+                      }}
+                      className="bg-red-100 hover:bg-red-200 border-red-300 text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>
