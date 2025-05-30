@@ -1,7 +1,7 @@
 
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
-import { TrendingUp, PieChart, Target } from "lucide-react";
+import { DollarSign, TrendingUp, PieChart, Target } from "lucide-react";
 import { Link } from "react-router-dom";
 import blowfishIcon from "@/assets/blowfish_icon.png"
 

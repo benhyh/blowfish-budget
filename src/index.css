@@ -96,10 +96,6 @@
   }
 
   body {
-    @apply text-foreground;
-    background-image: url('./assets/blowfish_budgeting_background.png');
-    background-size: cover;
-    background-repeat: no-repeat;
-    background-position: center;
+    @apply bg-background text-foreground;
   }
 }
