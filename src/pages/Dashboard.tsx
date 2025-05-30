@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { UserButton, useUser } from "@clerk/clerk-react";
+import { UserButton } from "@clerk/clerk-react";
 import BudgetStatus from "@/components/BudgetStatus";
 import BudgetCard from "@/components/BudgetCard";
 import ExpenseForm from "@/components/ExpenseForm";
@@ -15,7 +15,6 @@ interface Expense {
 }
 
 const Dashboard = () => {
-  const { isSignedIn } = useUser();
   const [income, setIncome] = useState(5000);
   const [totalSavings, setTotalSavings] = useState(1000);
   const [expenses, setExpenses] = useState<Expense[]>([
@@ -66,14 +65,10 @@ const Dashboard = () => {
             
             <div className="flex items-center space-x-6">
               <a href="/" className="hover:text-blue-300">Home</a>
-              {!isSignedIn && (
-                <>
-                  <a href="/about" className="hover:text-blue-300">About</a>
-                  <button className="bg-yellow-500 text-black px-4 py-2 rounded font-medium">
-                    Log In
-                  </button>
-                </>
-              )}
+              <a href="/about" className="hover:text-blue-300">About</a>
+              <button className="bg-yellow-500 text-black px-4 py-2 rounded font-medium">
+                Log In
+              </button>
               <UserButton afterSignOutUrl="/" />
             </div>
           </div>
@@ -87,8 +82,14 @@ const Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Budget Info */}
+            {/* Left Column */}
             <div className="lg:col-span-1 space-y-6">
+                {/* Blowfish Status */}
+              <div className="flex justify-center">
+                <BudgetStatus isOverBudget={isOverBudget} />
+              </div>
+
+                {/* Budget Info */}
               <BudgetCard
                 income={income}
                 setIncome={setIncome}
@@ -98,10 +99,7 @@ const Dashboard = () => {
                 budgetItems={budgetItems}
               />
               
-              {/* Blowfish Status */}
-              <div className="flex justify-center">
-                <BudgetStatus isOverBudget={isOverBudget} />
-              </div>
+              
             </div>
 
             {/* Right Column - Expense Management */}
