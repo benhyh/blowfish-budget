@@ -126,19 +126,23 @@ const BudgetCard = ({
                 <span>{item.percentage}%</span>
                 <span>${((income * item.percentage) / 100).toFixed(2)}</span>
                 <Input
-                  type="number"
+                  type="text"
+                  inputMode="decimal"
                   value={
                     adjusted[index] === undefined ||
                     adjusted[index] === null ||
-                    Number.isNaN(adjusted[index])
+                    adjusted[index] === 0
                       ? ""
                       : adjusted[index]
                   }
                   onChange={(e) => {
                     const val = e.target.value;
-                    const updated = [...adjusted];
-                    updated[index] = val === "" ? 0 : Number(val);
-                    setAdjusted(updated);
+                    // Only allow digits and at most one dot
+                    if (/^\d*\.?\d*$/.test(val)) {
+                      const updated = [...adjusted];
+                      updated[index] = val === "" ? undefined : Number(val);
+                      setAdjusted(updated);
+                    }
                   }}
                   placeholder="Adjust budget"
                   className="bg-blue-50/50"

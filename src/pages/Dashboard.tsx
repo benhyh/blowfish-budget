@@ -37,7 +37,7 @@ const Dashboard = () => {
     { type: "Savings", percentage: 20, budget: (income * 0.2), color: "bg-blue-100" }
   ];
 
-  const [adjusted, setAdjusted] = useState([0, 0, 0]);
+  const [adjusted, setAdjusted] = useState([null, null, null]);
 
   const totalBudget = budgetItems.reduce((sum, item) => sum + item.budget, 0);
   const isOverBudget = totalExpenses > totalBudget;
