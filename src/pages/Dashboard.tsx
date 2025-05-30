@@ -37,6 +37,8 @@ const Dashboard = () => {
     { type: "Savings", percentage: 20, budget: (income * 0.2), color: "bg-blue-100" }
   ];
 
+  const [adjusted, setAdjusted] = useState([0, 0, 0]);
+
   const totalBudget = budgetItems.reduce((sum, item) => sum + item.budget, 0);
   const isOverBudget = totalExpenses > totalBudget;
 
@@ -96,6 +98,8 @@ const Dashboard = () => {
                 setTotalSavings={setTotalSavings}
                 totalExpenses={totalExpenses}
                 budgetItems={budgetItems}
+                adjusted={adjusted}
+                setAdjusted={setAdjusted}
               />
               
               {/* Blowfish Status */}

@@ -1,6 +1,8 @@
-
+import { useMemo } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { it } from "node:test";
+import { set } from "date-fns";
 
 interface BudgetItem {
   type: string;
@@ -16,9 +18,47 @@ interface BudgetCardProps {
   setTotalSavings: (value: number) => void;
   totalExpenses: number;
   budgetItems: BudgetItem[];
+  setBudgetItems?: (items: BudgetItem[]) => void;
+  adjusted: number[];
+  setAdjusted: (arr: number[]) => void;
 }
 
-const BudgetCard = ({ income, setIncome, totalSavings, setTotalSavings, totalExpenses, budgetItems }: BudgetCardProps) => {
+const BudgetCard = ({
+  income,
+  setIncome,
+  totalSavings,
+  setTotalSavings,
+  totalExpenses,
+  budgetItems,
+  setBudgetItems,
+  adjusted,
+  setAdjusted,
+}: BudgetCardProps) => {
+  const initialBudgetTypes = [
+    { type: "Necessities", percentage: 50, color: "bg-yellow-100" },
+    { type: "Wants", percentage: 30, color: "bg-pink-100" },
+    { type: "Savings", percentage: 20, color: "bg-blue-100" },
+  ];
+
+  const defaultBudgetItems = useMemo(
+    () =>
+      initialBudgetTypes.map((item) => ({
+        ...item,
+        budget: Number(((income * item.percentage) / 100).toFixed(2)),
+      })),
+    [income]
+  );
+
+  const handleBudgetChange = (index: number, value: number | undefined) => {
+    const updated = [...budgetItems];
+    updated[index].budget = value || 0; // Ensure adjust is a number, default to 0 if undefined
+    setBudgetItems(updated);
+  };
+
+  const handleReset = () => {
+    setBudgetItems && setBudgetItems(defaultBudgetItems);
+  };
+
   return (
     <div className="space-y-6">
       {/* Income and Totals */}
@@ -33,10 +73,12 @@ const BudgetCard = ({ income, setIncome, totalSavings, setTotalSavings, totalExp
               className="bg-blue-50/50"
             />
           </div>
-          
+
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Total Savings</label>
+              <label className="block text-sm font-medium mb-2">
+                Total Savings
+              </label>
               <Input
                 type="number"
                 value={totalSavings}
@@ -45,7 +87,9 @@ const BudgetCard = ({ income, setIncome, totalSavings, setTotalSavings, totalExp
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">Total Expenses</label>
+              <label className="block text-sm font-medium mb-2">
+                Total Expenses
+              </label>
               <Input
                 type="number"
                 value={totalExpenses}
@@ -60,7 +104,9 @@ const BudgetCard = ({ income, setIncome, totalSavings, setTotalSavings, totalExp
       {/* Budget Breakdown */}
       <Card className="bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-xl font-bold">Create your budget:</CardTitle>
+          <CardTitle className="text-xl font-bold">
+            Create your budget:
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -70,17 +116,42 @@ const BudgetCard = ({ income, setIncome, totalSavings, setTotalSavings, totalExp
               <span>Budget</span>
               <span>Adjusted</span>
             </div>
-            
+
             {budgetItems.map((item, index) => (
-              <div key={index} className={`grid grid-cols-4 gap-4 p-3 rounded-lg ${item.color}`}>
+              <div
+                key={index}
+                className={`grid grid-cols-4 gap-4 p-3 rounded-lg ${item.color}`}
+              >
                 <span className="font-medium">{item.type}</span>
                 <span>{item.percentage}%</span>
                 <span>${((income * item.percentage) / 100).toFixed(2)}</span>
-                <span>${item.budget.toFixed(2)}</span>
+                <Input
+                  type="number"
+                  value={
+                    adjusted[index] === undefined ||
+                    adjusted[index] === null ||
+                    Number.isNaN(adjusted[index])
+                      ? ""
+                      : adjusted[index]
+                  }
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    const updated = [...adjusted];
+                    updated[index] = val === "" ? 0 : Number(val);
+                    setAdjusted(updated);
+                  }}
+                  placeholder="Adjust budget"
+                  className="bg-blue-50/50"
+                />
+                {/* <span>${item.budget.toFixed(2)}</span> */}
               </div>
             ))}
-            
-            <button className="text-sm text-blue-600 hover:text-blue-800">
+
+            <button
+              type="button"
+              className="text-sm text-blue-600 hover:text-blue-800"
+              onClick={handleReset}
+            >
               Reset to default
             </button>
           </div>
