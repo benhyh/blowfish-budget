@@ -207,10 +207,6 @@ const totalExpenses = expenses
             
             <div className="flex items-center space-x-6">
               <a href="/" className="hover:text-blue-300">Home</a>
-              <a href="/about" className="hover:text-blue-300">About</a>
-              <button className="bg-yellow-500 text-black px-4 py-2 rounded font-medium">
-                Log In
-              </button>
               <UserButton afterSignOutUrl="/" />
             </div>
           </div>
