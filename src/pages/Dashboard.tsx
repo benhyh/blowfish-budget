@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { UserButton } from "@clerk/clerk-react";
 import BudgetStatus from "@/components/BudgetStatus";
 import BudgetCard from "@/components/BudgetCard";
 import ExpenseForm from "@/components/ExpenseForm";
 import ExpenseTable from "@/components/ExpenseTable";
 import blowfishIcon from "@/assets/blowfish_icon.png";
+import { useSupabaseUser } from "@/lib/auth";
 
 interface Expense {
   id: string;
@@ -15,6 +16,7 @@ interface Expense {
 }
 
 const Dashboard = () => {
+  const { user, isLoaded, syncUser } = useSupabaseUser();
   const [income, setIncome] = useState(5000);
   const [totalSavings, setTotalSavings] = useState(1000);
   const [expenses, setExpenses] = useState<Expense[]>([
@@ -25,6 +27,13 @@ const Dashboard = () => {
     { id: "5", type: "Savings", savingOrExpense: "Saving", amount: 200, description: "Paycheck" },
     { id: "6", type: "Necessities", savingOrExpense: "Expense", amount: 1000, description: "Student loans :C" }
   ]);
+
+  // this syncs user with Supabase when component mounts and user is loaded
+  useEffect(() => {
+    if (isLoaded && user) {
+      syncUser();
+    }
+  }, [isLoaded, user, syncUser]);
 
   const totalExpenses = expenses
     .filter(expense => expense.savingOrExpense === "Expense")
