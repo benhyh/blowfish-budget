@@ -1,26 +1,34 @@
 import { useUser } from '@clerk/clerk-react'
 import { supabase } from './supabase'
 
-// Create or update user in Supabase when they sign in with Clerk
 export const syncUserWithSupabase = async (clerkUser: ReturnType<typeof useUser>['user']) => {
-  if (!clerkUser) return null
+  if (!clerkUser) {
+    console.log('syncUserWithSupabase: No Clerk user provided');
+    return null;
+  }
+
+  console.log('syncUserWithSupabase: Starting sync for user:', clerkUser.id);
+  console.log('User email:', clerkUser.primaryEmailAddress?.emailAddress);
 
   try {
-    // check if user already exists in Supabase
+    console.log('Checking if user exists in Supabase...');
     const { data: existingUser, error: selectError } = await supabase
       .from('users')
       .select('*')
       .eq('id', clerkUser.id)
       .single()
-    
+
+    console.log('Select result:', { existingUser, selectError });
+
     if (selectError && selectError.code !== 'PGRST116') {
-      // PGRST116 is "not found" error => expected for new users
-      console.error('Error checking existing user:', selectError)
-      return null
+      // PGRST116 is "not found" error, which is expected for new users
+      console.error('Error checking existing user:', selectError);
+      return null;
     }
 
     if (existingUser) {
-      // user exists, update their info if needed
+      console.log('User exists, updating...');
+      // User exists, update their info if needed
       const { data, error } = await supabase
         .from('users')
         .update({
@@ -32,12 +40,14 @@ export const syncUserWithSupabase = async (clerkUser: ReturnType<typeof useUser>
         .single()
 
       if (error) {
-        console.error('Error updating user:', error)
-        return null
+        console.error('Error updating user:', error);
+        return null;
       }
-      return data
+      console.log('User updated successfully:', data);
+      return data;
     } else {
-      //  new user so we create new record
+      console.log('Creating new user...');
+      // New user, create record
       const { data, error } = await supabase
         .from('users')
         .insert({
@@ -47,47 +57,58 @@ export const syncUserWithSupabase = async (clerkUser: ReturnType<typeof useUser>
         .select()
         .single()
 
+      console.log('Insert result:', { data, error });
+
       if (error) {
-        console.error('Error creating user:', error)
-        return null
+        console.error('Error creating user:', error);
+        return null;
       }
 
+      console.log('User created successfully:', data);
+
       // Also create default user settings
-      await createDefaultUserSettings(clerkUser.id)
+      console.log('Creating default user settings...');
+      const settingsResult = await createDefaultUserSettings(clerkUser.id);
+      console.log('Settings creation result:', settingsResult);
       
-      return data
+      return data;
     }
   } catch (error) {
-    console.error('Error syncing user with Supabase:', error)
-    return null
+    console.error('Error syncing user with Supabase:', error);
+    return null;
   }
 }
 
-// create default user settings for new users
+// Create default user settings for new users
 export const createDefaultUserSettings = async (userId: string) => {
+  console.log('createDefaultUserSettings for user:', userId);
+  
   try {
     const { data, error } = await supabase
       .from('user_settings')
       .insert({
         user_id: userId,
-        income: 0, // default income
-        total_savings: 0 // default savings
+        income: 5000, // Default income from your current Dashboard
+        total_savings: 1000 // Default savings from your current Dashboard
       })
       .select()
       .single()
 
+    console.log('Settings insert result:', { data, error });
+
     if (error) {
-      console.error('Error creating default user settings:', error)
-      return null
+      console.error('Error creating default user settings:', error);
+      return null;
     }
-    return data
+    console.log('Default settings created:', data);
+    return data;
   } catch (error) {
-    console.error('Error creating default user settings:', error)
-    return null
+    console.error('Error creating default user settings:', error);
+    return null;
   }
 }
 
-// hook to get current user and ensure they're synced with Supabase
+// Hook to get current user and ensure they're synced with Supabase
 export const useSupabaseUser = () => {
   const { user: clerkUser, isLoaded } = useUser()
   

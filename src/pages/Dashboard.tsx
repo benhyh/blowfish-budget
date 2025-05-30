@@ -6,34 +6,39 @@ import ExpenseForm from "@/components/ExpenseForm";
 import ExpenseTable from "@/components/ExpenseTable";
 import blowfishIcon from "@/assets/blowfish_icon.png";
 import { useSupabaseUser } from "@/lib/auth";
-
-interface Expense {
-  id: string;
-  type: string;
-  savingOrExpense: string;
-  amount: number;
-  description: string;
-}
+import { fetchUserExpenses, createExpense, type Expense } from "@/lib/expenseService";
 
 const Dashboard = () => {
   const { user, isLoaded, syncUser } = useSupabaseUser();
   const [income, setIncome] = useState(5000);
   const [totalSavings, setTotalSavings] = useState(1000);
-  const [expenses, setExpenses] = useState<Expense[]>([
-    { id: "1", type: "Savings", savingOrExpense: "Saving", amount: 350, description: "Paycheck" },
-    { id: "2", type: "Wants", savingOrExpense: "Expense", amount: 20, description: "New stuffed animal" },
-    { id: "3", type: "Wants", savingOrExpense: "Expense", amount: 10, description: "Amazon purchase" },
-    { id: "4", type: "Necessities", savingOrExpense: "Expense", amount: 15, description: "Toilet paper" },
-    { id: "5", type: "Savings", savingOrExpense: "Saving", amount: 200, description: "Paycheck" },
-    { id: "6", type: "Necessities", savingOrExpense: "Expense", amount: 1000, description: "Student loans :C" }
-  ]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  // this syncs user with Supabase when component mounts and user is loaded
+  // Sync user with Supabase when component mounts and user is loaded
   useEffect(() => {
     if (isLoaded && user) {
+      console.log('Syncing user with Supabase:', user.id);
       syncUser();
     }
   }, [isLoaded, user, syncUser]);
+
+  // Fetch expenses when user is available
+  useEffect(() => {
+    const loadExpenses = async () => {
+      if (user?.id) {
+        console.log('Loading expenses for user:', user.id);
+        
+        setLoading(true);
+        const userExpenses = await fetchUserExpenses(user.id);
+        console.log('Fetched expenses:', userExpenses);
+        setExpenses(userExpenses);
+        setLoading(false);
+      }
+    };
+
+    loadExpenses();
+  }, [user?.id]);
 
   const totalExpenses = expenses
     .filter(expense => expense.savingOrExpense === "Expense")
@@ -48,13 +53,41 @@ const Dashboard = () => {
   const totalBudget = budgetItems.reduce((sum, item) => sum + item.budget, 0);
   const isOverBudget = totalExpenses > totalBudget;
 
-  const handleAddExpense = (newExpense: Omit<Expense, 'id'>) => {
-    const expense: Expense = {
-      ...newExpense,
-      id: Date.now().toString()
-    };
-    setExpenses([...expenses, expense]);
+  const handleAddExpense = async (newExpense: Omit<Expense, 'id'>) => {
+    console.log('Adding expense:', newExpense);
+    console.log('Current user:', user?.id);
+    
+    if (!user?.id) {
+      console.error(' No user ID available');
+      return;
+    }
+
+    try {
+      const createdExpense = await createExpense(user.id, newExpense);
+      console.log('Expense created:', createdExpense);
+      
+      if (createdExpense) {
+        setExpenses(prev => {
+          const updated = [createdExpense, ...prev];
+          console.log('Updated expenses list:', updated);
+          return updated;
+        });
+      } else {
+        console.error('Failed to create expense');
+      }
+    } catch (error) {
+      console.error('Error in handleAddExpense:', error);
+    }
   };
+
+  // Show loading state while user or expenses are loading
+  if (!isLoaded || loading) {
+    return (
+      <div className="min-h-screen bg-blue-100/30 flex items-center justify-center">
+        <div className="text-xl">Loading...</div>
+      </div>
+    );
+  }
 
   return (
     <div 
