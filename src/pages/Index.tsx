@@ -2,6 +2,8 @@
 import { SignedIn, SignedOut, SignInButton, UserButton } from "@clerk/clerk-react";
 import { Button } from "@/components/ui/button";
 import { DollarSign, TrendingUp, PieChart, Target } from "lucide-react";
+import { Link } from "react-router-dom";
+import blowfishIcon from "@/assets/blowfish_icon.png"
 
 const Index = () => {
   return (
@@ -9,7 +11,7 @@ const Index = () => {
       {/* Navigation */}
       <nav className="container mx-auto px-6 py-4 flex justify-between items-center">
         <div className="flex items-center space-x-2">
-          <DollarSign className="h-8 w-8 text-blue-600" />
+          <img src={blowfishIcon} alt="Blowfish icon" className="h-12 w-12"/>
           <span className="text-2xl font-bold text-gray-900">Blowfish Budget</span>
         </div>
         
@@ -50,7 +52,7 @@ const Index = () => {
             
             <SignedIn>
               <Button size="lg" className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-4 text-lg font-semibold rounded-lg shadow-lg hover:shadow-xl transition-all duration-200">
-                Go to Dashboard
+                <Link to="/dashboard">Go to Dashboard</Link>
               </Button>
             </SignedIn>
           </div>
