@@ -82,8 +82,14 @@ const Dashboard = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            {/* Left Column - Budget Info */}
+            {/* Left Column */}
             <div className="lg:col-span-1 space-y-6">
+                {/* Blowfish Status */}
+              <div className="flex justify-center">
+                <BudgetStatus isOverBudget={isOverBudget} />
+              </div>
+
+                {/* Budget Info */}
               <BudgetCard
                 income={income}
                 setIncome={setIncome}
@@ -93,10 +99,7 @@ const Dashboard = () => {
                 budgetItems={budgetItems}
               />
               
-              {/* Blowfish Status */}
-              <div className="flex justify-center">
-                <BudgetStatus isOverBudget={isOverBudget} />
-              </div>
+              
             </div>
 
             {/* Right Column - Expense Management */}
