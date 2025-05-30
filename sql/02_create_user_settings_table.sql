@@ -1,0 +1,33 @@
+CREATE TABLE user_settings (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  user_id TEXT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  income DECIMAL(10,2) NOT NULL DEFAULT 0,
+  total_savings DECIMAL(10,2) NOT NULL DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+  UNIQUE(user_id) -- Each user can only have one settings record
+);
+
+ALTER TABLE user_settings ENABLE ROW LEVEL SECURITY;
+
+-- policy: users can only see their own settings
+CREATE POLICY "Users can view own settings" ON user_settings
+  FOR SELECT USING (auth.uid()::text = user_id);
+
+-- policy: users can insert their own settings
+CREATE POLICY "Users can insert own settings" ON user_settings
+  FOR INSERT WITH CHECK (auth.uid()::text = user_id);
+
+-- policy: users can update their own settings
+CREATE POLICY "Users can update own settings" ON user_settings
+  FOR UPDATE USING (auth.uid()::text = user_id);
+
+-- policy: users can delete their own settings
+CREATE POLICY "Users can delete own settings" ON user_settings
+  FOR DELETE USING (auth.uid()::text = user_id);
+
+-- trigger to automatically update the updated_at column
+CREATE TRIGGER update_user_settings_updated_at 
+  BEFORE UPDATE ON user_settings 
+  FOR EACH ROW 
+  EXECUTE FUNCTION update_updated_at_column(); 
