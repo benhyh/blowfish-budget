@@ -38,21 +38,21 @@ const ExpenseTable = ({ expenses }: ExpenseTableProps) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>Type</TableHead>
-              <TableHead>Saving/Expense</TableHead>
-              <TableHead>Amount</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Actions</TableHead>
+              <TableHead className="w-20">Type</TableHead>
+              <TableHead className="w-28">Saving/Expense</TableHead>
+              <TableHead className="w-24">Amount</TableHead>
+              <TableHead className="w-64">Description</TableHead>
+              <TableHead className="w-32">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {expenses.map((expense) => (
               <TableRow key={expense.id} className={getRowColor(expense.type)}>
-                <TableCell className="font-medium">{expense.type}</TableCell>
-                <TableCell>{expense.savingOrExpense}</TableCell>
-                <TableCell>${expense.amount.toFixed(2)}</TableCell>
-                <TableCell>{expense.description}</TableCell>
-                <TableCell>
+                <TableCell className="font-medium w-20">{expense.type}</TableCell>
+                <TableCell className="w-28">{expense.savingOrExpense}</TableCell>
+                <TableCell className="w-24">${expense.amount.toFixed(2)}</TableCell>
+                <TableCell className="w-64">{expense.description}</TableCell>
+                <TableCell className="w-32">
                   <div className="flex space-x-2">
                     <Button
                       variant="outline"
