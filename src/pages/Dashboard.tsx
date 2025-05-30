@@ -26,15 +26,30 @@ const Dashboard = () => {
     { id: "6", type: "Necessities", savingOrExpense: "Expense", amount: 1000, description: "Student loans :C" }
   ]);
 
-  const totalExpenses = expenses
+const totalExpenses = expenses
     .filter(expense => expense.savingOrExpense === "Expense")
     .reduce((sum, expense) => sum + expense.amount, 0);
+  /*calculating actual expenses */
+  const actualSavings = expenses
+  .filter((e) => e.savingOrExpense === "Saving")
+  .reduce((sum, e) => sum + e.amount, 0);
+
+  const actualExpenses = totalExpenses; 
+
+  const actualDifference = actualSavings - actualExpenses;
 
   const budgetItems = [
     { type: "Necessities", percentage: 50, budget: (income * 0.5), color: "bg-yellow-100" },
     { type: "Wants", percentage: 30, budget: (income * 0.3), color: "bg-pink-100" },
     { type: "Savings", percentage: 20, budget: (income * 0.2), color: "bg-blue-100" }
   ];
+
+  /*calculaing expected expenses*/
+  const expectedSavings = budgetItems.find((item) => item.type === "Savings")?.budget || 0;
+  const expectedExpenses = budgetItems
+  .filter((item) => item.type !== "Savings")
+  .reduce((sum, item) => sum + item.budget, 0);
+  const expectedDifference = expectedSavings - expectedExpenses;
 
   const totalBudget = budgetItems.reduce((sum, item) => sum + item.budget, 0);
   const isOverBudget = totalExpenses > totalBudget;
@@ -97,6 +112,12 @@ const Dashboard = () => {
                 setTotalSavings={setTotalSavings}
                 totalExpenses={totalExpenses}
                 budgetItems={budgetItems}
+                expectedSavings={expectedSavings}
+                expectedExpenses={expectedExpenses}
+                expectedDifference={expectedDifference}
+                actualSavings={actualSavings}
+                actualExpenses={actualExpenses}
+                actualDifference={actualDifference}
               />
               
               
