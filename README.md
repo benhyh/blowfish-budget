@@ -1,73 +1,37 @@
-# Welcome to your Lovable project
+# 🐡 Blowfish Budget
 
-## Project info
+> *"Don't blow it!!!"* - Smart budgeting with the 50/30/20 rule
 
-**URL**: https://lovable.dev/projects/9903f3b6-6bef-4bc0-b11d-29ecc6ce7ea0
+## Features
 
-## How can I edit this code?
+- **50/30/20 Budget Tracking**: Automatically categorizes expenses into Necessities (50%), Wants (30%), and Savings (20%)
+- **Real-time Expense Management**: Add, edit, and delete expenses with instant database sync
+- **Visual Budget Overview**: Interactive dashboard with color-coded expense categories
+- **Secure Authentication**: Powered by Clerk for secure user management
+- **Persistent Data Storage**: All data stored securely in Supabase with row-level security
 
-There are several ways of editing your application.
+## 🛠️ Tech Stack
 
-**Use Lovable**
+- **Frontend**: React, TypeScript, Vite
+- **UI Components**: ShadCN/ui, Radix UI, Tailwind CSS
+- **Authentication**: Clerk
+- **Database**: Supabase (PostgreSQL)
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/9903f3b6-6bef-4bc0-b11d-29ecc6ce7ea0) and start prompting.
+## How It Works
 
-Changes made via Lovable will be committed automatically to this repo.
+1. **Set Your Income**: Configure your monthly income in the dashboard
+2. **Budget Allocation**: The app automatically calculates your 50/30/20 budget
+3. **Track Expenses**: Add expenses and categorize them as Necessities, Wants, or Savings
+4. **Monitor Progress**: Visual indicators show if you're on track or over budget
+5. **Manage Data**: Edit or delete expenses with beautiful modal dialogs
 
-**Use your preferred IDE**
+## Security
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- Row Level Security (RLS) policies on all database tables
+- User data isolation through Clerk authentication
+- Environment variables for sensitive credentials
+- Secure API endpoints with user validation
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+---
 
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/9903f3b6-6bef-4bc0-b11d-29ecc6ce7ea0) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Built with ❤️ using React, TypeScript, and modern web technologies.
