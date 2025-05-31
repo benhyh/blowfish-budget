@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 
@@ -27,9 +26,12 @@ interface BudgetCardProps {
   actualSavings: number;
   actualExpenses: number;
   actualDifference: number;
+  adjusted: string[];
+  setAdjusted: (adjusted: string[]) => void;
 }
 
-const BudgetCard = ({ income,
+const BudgetCard = ({
+  income,
   setIncome,
   totalSavings,
   setTotalSavings,
@@ -40,11 +42,24 @@ const BudgetCard = ({ income,
   expectedDifference,
   actualSavings,
   actualExpenses,
-  actualDifference, }: BudgetCardProps) => {
+  actualDifference,
+  adjusted,
+  setAdjusted,
+}: BudgetCardProps) => {
+  // Calculate expected savings and expenses based on adjusted values
+  const adjustedNumbers = budgetItems.map((item, idx) =>
+    adjusted[idx] && !isNaN(Number(adjusted[idx])) ? Number(adjusted[idx]) : (income * item.percentage) / 100
+  );
 
-  const savingsDifference = actualSavings - expectedSavings;
-  const expensesDifference = expectedExpenses - actualExpenses;
-  
+  const dynamicExpectedSavings =
+    adjustedNumbers[2]; // Savings is the third item
+
+  const dynamicExpectedExpenses =
+    adjustedNumbers[0] + adjustedNumbers[1]; // Necessities + Wants
+
+  const savingsDifference = actualSavings - dynamicExpectedSavings;
+  const expensesDifference = dynamicExpectedExpenses - actualExpenses;
+
   return (
     <div className="space-y-6">
       {/* Income and Totals */}
@@ -59,54 +74,72 @@ const BudgetCard = ({ income,
               className="bg-blue-50/50"
             />
           </div>
-          
+
           <div className="grid grid-cols-1 gap-4">
-          
             {/* Savings Row */}
             <div className="grid grid-cols-3 gap-4 items-start mb-4">
               <div className="flex flex-col">
-                <label className="text-sm font-medium mb-2">Expected Savings</label>
+                <label className="text-sm font-medium mb-2">
+                  Expected Savings
+                </label>
                 <div className="bg-blue-50/50 rounded-md px-4 py-2 text-sm border w-32">
-                  ${expectedSavings.toFixed(2)}
+                  ${dynamicExpectedSavings.toFixed(2)}
                 </div>
               </div>
               <div className="flex flex-col">
-                <label className="text-sm font-medium mb-2">Actual<br />Savings</label>
+                <label className="text-sm font-medium mb-2">
+                  Actual
+                  <br />
+                  Savings
+                </label>
                 <div className="bg-blue-50/50 rounded-md px-4 py-2 text-sm border w-32">
                   ${actualSavings.toFixed(2)}
                 </div>
               </div>
               <div className="flex flex-col">
-                <label className="text-sm font-medium mb-2">Savings Difference</label>
+                <label className="text-sm font-medium mb-2">
+                  Savings Difference
+                </label>
                 <div
-                className={`rounded-md px-4 py-2 text-sm border w-32 ${
-                  savingsDifference < 0 ? "bg-red-100 text-red-800" : "bg-blue-50/50"
-                }`}
-              >
-                ${savingsDifference.toFixed(2)}
-              </div>
+                  className={`rounded-md px-4 py-2 text-sm border w-32 ${
+                    savingsDifference < 0
+                      ? "bg-red-100 text-red-800"
+                      : "bg-blue-50/50"
+                  }`}
+                >
+                  ${savingsDifference.toFixed(2)}
+                </div>
               </div>
             </div>
 
             {/* Expenses Row */}
             <div className="grid grid-cols-3 gap-4 items-start">
               <div className="flex flex-col">
-                <label className="text-sm font-medium mb-2">Expected Expenses</label>
+                <label className="text-sm font-medium mb-2">
+                  Expected Expenses
+                </label>
                 <div className="bg-gray-100 rounded-md px-4 py-2 text-sm border w-32">
-                  ${expectedExpenses.toFixed(2)}
+                  ${dynamicExpectedExpenses.toFixed(2)}
                 </div>
               </div>
               <div className="flex flex-col">
-                <label className="text-sm font-medium mb-2">Actual<br /> Expenses</label>
+                <label className="text-sm font-medium mb-2">
+                  Actual
+                  <br /> Expenses
+                </label>
                 <div className="bg-gray-100 rounded-md px-4 py-2 text-sm border w-32">
                   ${actualExpenses.toFixed(2)}
                 </div>
               </div>
               <div className="flex flex-col">
-                <label className="text-sm font-medium mb-2">Expenses Difference</label>
+                <label className="text-sm font-medium mb-2">
+                  Expenses Difference
+                </label>
                 <div
                   className={`rounded-md px-4 py-2 text-sm border w-32 ${
-                    expensesDifference < 0 ? "bg-red-100 text-red-800" : "bg-gray-100"
+                    expensesDifference < 0
+                      ? "bg-red-100 text-red-800"
+                      : "bg-gray-100"
                   }`}
                 >
                   ${expensesDifference.toFixed(2)}
@@ -120,7 +153,9 @@ const BudgetCard = ({ income,
       {/* Budget Breakdown */}
       <Card className="bg-white/80 backdrop-blur-sm">
         <CardHeader>
-          <CardTitle className="text-xl font-bold">Create your budget:</CardTitle>
+          <CardTitle className="text-xl font-bold">
+            Create your budget:
+          </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-3">
@@ -130,16 +165,34 @@ const BudgetCard = ({ income,
               <span>Budget</span>
               <span>Adjusted</span>
             </div>
-            
+
             {budgetItems.map((item, index) => (
-              <div key={index} className={`grid grid-cols-4 gap-4 p-3 rounded-lg ${item.color}`}>
+              <div
+                key={index}
+                className={`grid grid-cols-4 gap-4 p-3 rounded-lg ${item.color}`}
+              >
                 <span className="font-medium">{item.type}</span>
                 <span>{item.percentage}%</span>
                 <span>${((income * item.percentage) / 100).toFixed(2)}</span>
-                <span>${item.budget.toFixed(2)}</span>
+                <Input
+                  type="text"
+                  inputMode="decimal"
+                  value={adjusted[index] ?? ""}
+                  onChange={(e) => {
+                    const val = e.target.value;
+                    // Only allow digits and at most one dot
+                    if (/^\d*\.?\d*$/.test(val)) {
+                      const updated = [...adjusted];
+                      updated[index] = val;
+                      setAdjusted(updated);
+                    }
+                  }}
+                  placeholder="Adjust budget"
+                  className="bg-blue-50/50"
+                />
               </div>
             ))}
-            
+
             <button className="text-sm text-blue-600 hover:text-blue-800">
               Reset to default
             </button>

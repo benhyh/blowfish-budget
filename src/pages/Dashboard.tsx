@@ -20,6 +20,7 @@ const Dashboard = () => {
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [deletingExpense, setDeletingExpense] = useState<Expense | null>(null);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
+  const [adjusted, setAdjusted] = useState<string[]>(["", "", ""]);
 
   // Sync user with Supabase when component mounts and user is loaded
   useEffect(() => {
@@ -241,6 +242,8 @@ const totalExpenses = expenses
                 actualSavings={actualSavings}
                 actualExpenses={actualExpenses}
                 actualDifference={actualDifference}
+                adjusted={adjusted}
+                setAdjusted={setAdjusted}
               />
               
               
