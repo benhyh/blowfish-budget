@@ -10,7 +10,7 @@
 - **Secure Authentication**: Powered by Clerk for secure user management
 - **Persistent Data Storage**: All data stored securely in Supabase with row-level security
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend**: React, TypeScript, Vite
 - **UI Components**: ShadCN/ui, Radix UI, Tailwind CSS
